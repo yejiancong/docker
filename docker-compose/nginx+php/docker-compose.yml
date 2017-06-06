@@ -1,0 +1,31 @@
+version: '1'
+# 定义三个服务nginx,php
+services:
+    nginx:
+        # 依赖php服务，意味着在启动nginx之前先启动php
+        depends_on:
+            - php
+        # nginx镜像的路径
+        image: yejiancong/nginx
+        # 容器的/home/docker/nginx目录挂载主机中的/home/docker/nginx目录，
+        # 这样使nginx容器把网站文件和目录存放到主机目录中，持久化和方便管理
+        volumes:
+            - /home/docker/nginx:/home/docker/nginx
+        # nginx意外退出时自动重启
+        restart: always
+
+        # 映射80和443端口
+        ports:
+            - "80:80"
+            - "443:443"
+
+        # 容器名称
+        container_name: nginx
+    php:
+        image: yejiancong/php-fpm
+        restart: always
+        volumes:
+            - /home/docker/nginx/www:/home/docker/nginx/www
+            - /home/docker/php:/home/docker/php
+        container_name: php
+
